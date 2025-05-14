@@ -21,7 +21,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:create": "typeorm migration:create src/infra/database/migrations/migration",
+    "migration:create": "node scripts/create-migration.js",
     "migration:run": "typeorm migration:run -d ./dist/infra/config/database.config.js",
     "migration:revert": "typeorm migration:revert -d ./dist/infra/config/database.config.js",
     "seed:run": "ts-node ./dist/infra/config/database/seeder.js"
