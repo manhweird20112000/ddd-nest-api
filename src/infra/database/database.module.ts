@@ -24,6 +24,15 @@ import { IAdapterSecret } from '@/infra/secret/adapter';
             charset: 'utf8mb4_unicode_ci',
           },
           timezone: '+07:00',
+          // debug: true,
+          logging: true,
+          logger: 'advanced-console',
+          migrations: [
+            'dist/modules/**/infra/database/typeorm/migrations/**/*{.ts,.js}',
+          ],
+          entities: [
+            'dist/modules/**/infra/database/typeorm/entities/**/*.entity{.ts,.js}',
+          ],
         };
       },
       async dataSourceFactory(options: DataSourceOptions) {

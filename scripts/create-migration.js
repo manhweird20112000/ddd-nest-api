@@ -1,16 +1,18 @@
 const { execSync } = require('child_process');
 const path = require('path');
 
-const [moduleName] = process.argv.slice(2);
+const [moduleName, migrationName] = process.argv.slice(2);
 
-if (!moduleName) {
+if (!moduleName || !migrationName) {
   console.error('❌ Migration invalid');
   process.exit(1);
 }
 
-const migrationDir = `src/modules/${moduleName}/infra/database/typeorm/migrations`;
+const migrationDir = `src/modules/${moduleName}/infra/database/typeorm/migrations/${migrationName}`;
 
 const command = `yarn typeorm migration:create ${path.join(migrationDir)}`;
+
+console.log(command)
 
 try {
   console.log(`📦  Migration creating...`);
