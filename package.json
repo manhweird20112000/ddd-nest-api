@@ -24,7 +24,7 @@
     "migration:create": "node scripts/create-migration.js",
     "migration:run": "typeorm migration:run -d ./dist/infra/config/database.config.js",
     "migration:revert": "typeorm migration:revert -d ./dist/infra/config/database.config.js",
-    "seed:run": "ts-node ./dist/infra/config/database/seeder.js"
+    "seed:run": "node scripts/run-seeder.js"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",

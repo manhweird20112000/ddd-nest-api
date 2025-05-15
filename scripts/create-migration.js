@@ -12,8 +12,6 @@ const migrationDir = `src/modules/${moduleName}/infra/database/typeorm/migration
 
 const command = `yarn typeorm migration:create ${path.join(migrationDir)}`;
 
-console.log(command)
-
 try {
   console.log(`📦  Migration creating...`);
   execSync(command, { stdio: 'inherit' });
