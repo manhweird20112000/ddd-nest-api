@@ -17,7 +17,7 @@ const dataSource = new DataSource({
   },
   timezone: '+07:00',
   synchronize: true,
-  debug: true,
+  // debug: true,
   logging: true,
   logger: 'advanced-console',
   migrations: [
