@@ -6,4 +6,6 @@ export abstract class IAdapterSecret {
 
   JWT_SECRET: string;
   TOKEN_EXPIRATION: string;
+
+  STRIPE_API_KEY: string;
 }

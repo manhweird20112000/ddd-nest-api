@@ -2,10 +2,6 @@ import { ConfigService } from '@nestjs/config';
 import { IAdapterSecret } from './adapter';
 
 export class SecretService extends ConfigService implements IAdapterSecret {
-  constructor() {
-    super();
-  }
-
   APP_NAME = this.get('APP_NAME');
   APP_PORT = this.get('APP_PORT');
 
@@ -15,4 +11,6 @@ export class SecretService extends ConfigService implements IAdapterSecret {
 
   JWT_SECRET = this.get('JWT_SECRET');
   TOKEN_EXPIRATION = this.get('TOKEN_EXPIRATION');
+
+  STRIPE_API_KEY = this.get('STRIPE_API_KEY');
 }

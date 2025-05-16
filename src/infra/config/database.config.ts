@@ -17,11 +17,15 @@ const dataSource = new DataSource({
   },
   timezone: '+07:00',
   synchronize: true,
-  debug: true,
+  // debug: true,
   logging: true,
   logger: 'advanced-console',
-  migrations: ['dist/infra/persistence/migrations/**/*{.ts,.js}'],
-  entities: ['dist/infra/persistence/entities/**/*.entity{.ts,.js}'],
+  migrations: [
+    'dist/modules/**/infra/database/typeorm/migrations/**/*{.ts,.js}',
+  ],
+  entities: [
+    'dist/modules/**/infra/database/typeorm/entities/**/*.entity{.ts,.js}',
+  ],
 });
 
 export default dataSource;
