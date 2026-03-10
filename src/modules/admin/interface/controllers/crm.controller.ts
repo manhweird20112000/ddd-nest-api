@@ -2,8 +2,10 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -13,6 +15,7 @@ import { toAdminPresenter } from '../presenters';
 import { AuthGuard } from '@/modules/admin-auth/interface/guards/auth.guard';
 import { CurrentUser } from '@/modules/admin-auth/interface/decorators/current-admin.decorator';
 import { DeleteAdminUseCase } from '../../application/use-cases/delete-admin.use-case';
+import { ListAdminUseCase } from '../../application/use-cases/list-admin.use-case';
 
 @Controller({
   version: '1',
@@ -22,6 +25,7 @@ export class CrmAdminController {
   constructor(
     private readonly createAdminUseCase: CreateAdminUseCase,
     private readonly deleteAdminUseCase: DeleteAdminUseCase,
+    private readonly listAdminUseCase: ListAdminUseCase,
   ) {}
 
   @Post('create')
@@ -46,6 +50,13 @@ export class CrmAdminController {
       id: +id,
       adminId: +admin.sub,
     });
+    return result;
+  }
+
+  @Get('list')
+  @UseGuards(AuthGuard)
+  async listAdmin(@Query() query: any) {
+    const result = await this.listAdminUseCase.execute(query);
     return result;
   }
 }

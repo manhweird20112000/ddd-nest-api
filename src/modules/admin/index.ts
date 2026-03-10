@@ -14,6 +14,7 @@ import { AdminQueryPort } from './application/ports/admin-query.port';
 import { AdminAuthModule } from '../admin-auth';
 import { forwardRef } from '@nestjs/common';
 import { DeleteAdminUseCase } from './application/use-cases/delete-admin.use-case';
+import { ListAdminUseCase } from './application/use-cases/list-admin.use-case';
 @Module({
   imports: [
     forwardRef(() => AdminAuthModule),
@@ -57,6 +58,13 @@ import { DeleteAdminUseCase } from './application/use-cases/delete-admin.use-cas
         return new DeleteAdminUseCase(adminRepository);
       },
     },
+    {
+      provide: ListAdminUseCase,
+      inject: [AdminRepository],
+      useFactory(adminRepository: AdminRepository) {
+        return new ListAdminUseCase(adminRepository);
+      },
+    }
   ],
   exports: [AdminQueryPort],
 })

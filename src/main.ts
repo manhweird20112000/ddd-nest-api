@@ -7,7 +7,7 @@ import { HttpSuccessInterceptor } from '@/shared/interceptors/http-success.inter
 import { RequestMethod, VersioningType } from '@nestjs/common';
 import { IAdapterSecret } from '@/infra/secret/adapter';
 import { useContainer } from 'class-validator';
-import * as compression from 'compression';
+import compression from 'compression';
 import { ValidationPipe } from '@/shared/validation/validation.pipe';
 
 async function bootstrap() {

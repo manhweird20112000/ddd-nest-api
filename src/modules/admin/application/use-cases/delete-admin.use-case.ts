@@ -1,6 +1,6 @@
 import { BaseUseCase } from '@/shared/common/base-use-case';
 import { AdminRepository } from '../../domain';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 interface Input {
   id: number;
@@ -12,8 +12,13 @@ export class DeleteAdminUseCase implements BaseUseCase<Input, boolean> {
 
   async execute(input: Input): Promise<boolean> {
     const admin = await this.adminRepository.findById(input.id);
+
     if (!admin) {
       throw new NotFoundException();
+    }
+
+    if (admin.id === input.adminId) {
+      throw new BadRequestException('You cannot delete yourself');
     }
 
     return this.adminRepository.delete(input.id, input.adminId);

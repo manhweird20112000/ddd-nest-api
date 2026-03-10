@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { AdminOrmEntity } from '../entities/admin-orm.entity';
 import { AdminOrmMapper } from '../mappers/admin-orm.mapper';
+import { paginate } from 'nestjs-paginate';
 
 export class AdminRepositoryImpl implements AdminRepository {
   private readonly mapper = new AdminOrmMapper();
@@ -11,6 +12,23 @@ export class AdminRepositoryImpl implements AdminRepository {
     @InjectRepository(AdminOrmEntity)
     private readonly adminRepository: Repository<AdminOrmEntity>,
   ) {}
+
+  async list(query: Record<string, any>): Promise<Admin[]> {
+   const { page, limit } = query;
+
+   const result = await paginate({
+     page, limit,
+     path: ''
+   }, this.adminRepository, {
+    sortableColumns: ['id'],
+    searchableColumns: ['name', 'email'],
+    defaultSortBy: [['id', 'DESC']],
+   })
+
+   console.log(result)
+
+   return []
+  }
 
   async delete(id: number, adminId: number): Promise<boolean> {
     const result = await this.adminRepository.update(
