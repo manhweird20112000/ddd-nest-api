@@ -11,7 +11,7 @@ async function run() {
     process.exit(1);
   }
 
-  const seederPath = path.join(__dirname, `../dist/modules/${module}/infra/database/typeorm/seeders/${fileName}`);
+  const seederPath = path.join(__dirname, `../dist/modules/${module}/infra/databases/orm/seeders/${fileName}`);
 
   if(!existsSync(seederPath)){
     console.error(`❌ Seeder file not found: ${seederPath}`);

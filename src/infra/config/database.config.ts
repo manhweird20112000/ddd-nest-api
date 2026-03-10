@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 config({ path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env' });
 
 const dataSource = new DataSource({
-  type: 'mysql',
+  type: 'postgres',
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USER,
@@ -15,7 +15,6 @@ const dataSource = new DataSource({
   extra: {
     charset: 'utf8mb4_unicode_ci',
   },
-  timezone: '+07:00',
   synchronize: true,
   // debug: true,
   logging: true,
@@ -25,6 +24,7 @@ const dataSource = new DataSource({
   ],
   entities: [
     'dist/modules/**/infra/database/typeorm/entities/**/*.entity{.ts,.js}',
+    'dist/modules/**/infra/databases/orm/entities/**/*.entity{.ts,.js}',
   ],
 });
 

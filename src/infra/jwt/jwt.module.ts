@@ -13,16 +13,16 @@ import { PassportModule } from '@nestjs/passport';
       property: 'user',
       session: false,
     }),
-    JwtModule.registerAsync({
-      useFactory: ({ JWT_SECRET, TOKEN_EXPIRATION }: IAdapterSecret) => {
-        return {
-          secret: JWT_SECRET,
-          signOptions: { expiresIn: TOKEN_EXPIRATION },
-        };
-      },
-      imports: [SecretModule],
-      inject: [IAdapterSecret],
-    }),
+    // JwtModule.registerAsync({
+    //   useFactory: ({ JWT_SECRET, TOKEN_EXPIRATION }: IAdapterSecret) => {
+    //     return {
+    //       secret: JWT_SECRET,
+    //       signOptions: { expiresIn: TOKEN_EXPIRATION },
+    //     };
+    //   },
+    //   imports: [SecretModule],
+    //   inject: [IAdapterSecret],
+    // }),
   ],
   providers: [JwtStrategy, JwtService, JwtAuthService],
   exports: [JwtAuthService],

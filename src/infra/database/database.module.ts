@@ -11,10 +11,10 @@ import { IAdapterSecret } from '@/infra/secret/adapter';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      useFactory: ({ MYSQL_URI }: IAdapterSecret) => {
+      useFactory: ({ POSTGRES_URI }: IAdapterSecret) => {
         return {
-          type: 'mysql',
-          url: MYSQL_URI,
+          type: 'postgres',
+          url: POSTGRES_URI,
           timeout: 5000,
           connectionTimeout: 5000,
           autoLoadEntities: true,
@@ -32,6 +32,7 @@ import { IAdapterSecret } from '@/infra/secret/adapter';
           ],
           entities: [
             'dist/modules/**/infra/database/typeorm/entities/**/*.entity{.ts,.js}',
+            'dist/modules/**/infra/databases/orm/entities/**/*.entity{.ts,.js}',
           ],
         };
       },
