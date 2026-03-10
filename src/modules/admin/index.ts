@@ -9,6 +9,8 @@ import { AdminRepository } from './domain/repositories/admin.repository';
 import { AdminRepositoryImpl } from './infra/databases/orm/repositories/admin.repository.impl';
 import { RoleRepository } from './domain';
 import { RoleRepositoryImpl } from './infra/databases/orm/repositories/role.repository.impl';
+import { AdminQueryService } from './application/services/admin-query.service';
+import { AdminQueryPort } from './application/ports/admin-query.port';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -28,6 +30,13 @@ import { RoleRepositoryImpl } from './infra/databases/orm/repositories/role.repo
       useClass: RoleRepositoryImpl,
     },
     {
+      provide: AdminQueryPort,
+      inject: [AdminRepository],
+      useFactory(adminRepository: AdminRepository) {
+        return new AdminQueryService(adminRepository);
+      },
+    },
+    {
       provide: CreateAdminUseCase,
       inject: [AdminRepository, RoleRepository],
       useFactory(
@@ -38,6 +47,6 @@ import { RoleRepositoryImpl } from './infra/databases/orm/repositories/role.repo
       },
     },
   ],
-  exports: [],
+  exports: [AdminQueryPort],
 })
 export class AdminModule {}
