@@ -11,8 +11,12 @@ import { RoleRepository } from './domain';
 import { RoleRepositoryImpl } from './infra/databases/orm/repositories/role.repository.impl';
 import { AdminQueryService } from './application/services/admin-query.service';
 import { AdminQueryPort } from './application/ports/admin-query.port';
+import { AdminAuthModule } from '../admin-auth';
+import { forwardRef } from '@nestjs/common';
+import { DeleteAdminUseCase } from './application/use-cases/delete-admin.use-case';
 @Module({
   imports: [
+    forwardRef(() => AdminAuthModule),
     TypeOrmModule.forFeature([
       AdminOrmEntity,
       RoleOrmEntity,
@@ -44,6 +48,13 @@ import { AdminQueryPort } from './application/ports/admin-query.port';
         roleRepository: RoleRepository,
       ) {
         return new CreateAdminUseCase(adminRepository, roleRepository);
+      },
+    },
+    {
+      provide: DeleteAdminUseCase,
+      inject: [AdminRepository],
+      useFactory(adminRepository: AdminRepository) {
+        return new DeleteAdminUseCase(adminRepository);
       },
     },
   ],

@@ -28,5 +28,6 @@ import { IAdapterSecret } from '@/infra/secret/adapter';
       },
     },
   ],
+  exports: [IJwtService],
 })
 export class AdminAuthModule {}
