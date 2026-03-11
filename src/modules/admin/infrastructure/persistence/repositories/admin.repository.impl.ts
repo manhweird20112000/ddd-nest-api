@@ -14,20 +14,18 @@ export class AdminRepositoryImpl implements AdminRepository {
   ) {}
 
   async list(query: Record<string, any>): Promise<Admin[]> {
-   const { page, limit } = query;
+    //  const { page, limit } = query;
 
-   const result = await paginate({
-     page, limit,
-     path: ''
-   }, this.adminRepository, {
-    sortableColumns: ['id'],
-    searchableColumns: ['name', 'email'],
-    defaultSortBy: [['id', 'DESC']],
-   })
+    //  const result = await paginate({
+    //    page, limit,
+    //    path: ''
+    //  }, this.adminRepository, {
+    //   sortableColumns: ['id'],
+    //   searchableColumns: ['name', 'email'],
+    //   defaultSortBy: [['id', 'DESC']],
+    //  })
 
-   console.log(result)
-
-   return []
+    return [];
   }
 
   async delete(id: number, adminId: number): Promise<boolean> {
@@ -42,7 +40,11 @@ export class AdminRepositoryImpl implements AdminRepository {
   }
 
   async findById(id: number): Promise<Admin | null> {
-    const orm = await this.adminRepository.findOne({ where: { id } });
+    const orm = await this.adminRepository.findOne({
+      where: { id },
+      relations: ['roles.permissions'],
+    });
+
     return orm ? this.mapper.toDomain(orm) : null;
   }
 

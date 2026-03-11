@@ -2,6 +2,7 @@ import { Admin, AdminStatusVO, Role } from '@/modules/admin/domain';
 import { AdminOrmEntity } from '../entities/admin-orm.entity';
 import { PasswordVO } from '@/shared/domain';
 import { RoleOrmEntity } from '../entities/role-orm.entity';
+import { RoleOrmMapper } from './role-orm.mapper';
 
 /**
  * Maps between domain Admin and persistence AdminOrmEntity.
@@ -19,7 +20,7 @@ export class AdminOrmMapper {
       new AdminStatusVO(orm.status),
       orm.created_by,
       orm.deleted_by,
-      orm.roles?.map((role) => new Role(role.id, role.name, role.description)),
+      orm.roles?.map((role) => RoleOrmMapper.toDomain(role)),
       orm.created_at,
       orm.updated_at,
       orm.delete_at,

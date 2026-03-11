@@ -5,7 +5,7 @@ export * from './entities/permission.entity';
 // repositories
 export * from './repositories/admin.repository';
 export * from './repositories/role.repository';
-
+export * from './repositories/permission.repository';
 // value objects
 export * from './value-objects/admin-status.vo';
 

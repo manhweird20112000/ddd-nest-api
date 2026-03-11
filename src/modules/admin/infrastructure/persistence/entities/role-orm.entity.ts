@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { AdminOrmEntity } from './admin-orm.entity';
-import { RolePermissionOrmEntity } from './permission-orm.entity';
+import { PermissionOrmEntity } from './permission-orm.entity';
 
 @Entity('roles')
 export class RoleOrmEntity extends BaseEntity {
@@ -23,13 +23,13 @@ export class RoleOrmEntity extends BaseEntity {
   @ManyToMany(() => AdminOrmEntity, (admin) => admin.roles)
   admins: AdminOrmEntity[];
 
-  @ManyToMany(() => RolePermissionOrmEntity)
+  @ManyToMany(() => PermissionOrmEntity)
   @JoinTable({
     name: 'role_permissions',
     joinColumn: { name: 'role_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'permission_id', referencedColumnName: 'id' },
   })
-  permissions: RolePermissionOrmEntity[];
+  permissions: PermissionOrmEntity[];
 
   @Column({ type: 'smallint', default: 0 })
   is_default: number;

@@ -16,6 +16,11 @@ import { AuthGuard } from '@/modules/admin-auth/interface/guards/auth.guard';
 import { CurrentUser } from '@/modules/admin-auth/interface/decorators/current-admin.decorator';
 import { DeleteAdminUseCase } from '../../application/use-cases/delete-admin.use-case';
 import { ListAdminUseCase } from '../../application/use-cases/list-admin.use-case';
+import { ListRoleUseCase } from '../../application/use-cases/list-role.use-case';
+import { CreateRoleDto } from '../../application/dtos/create-role.dto';
+import { CreateRoleUseCase } from '../../application/use-cases/create-role.use-case';
+import { PermissionGuard } from '../guards/permission.guard';
+import { Permission } from '../decorators/permission.decorator';
 
 @Controller({
   version: '1',
@@ -26,10 +31,13 @@ export class CrmAdminController {
     private readonly createAdminUseCase: CreateAdminUseCase,
     private readonly deleteAdminUseCase: DeleteAdminUseCase,
     private readonly listAdminUseCase: ListAdminUseCase,
+    private readonly listRoleUseCase: ListRoleUseCase,
+    private readonly createRoleUseCase: CreateRoleUseCase,
   ) {}
 
   @Post('create')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
+  @Permission('admin:create')
   async createAdmin(
     @Body() createAdminDto: CreateAdminDto,
     @Req() req: Request,
@@ -57,6 +65,20 @@ export class CrmAdminController {
   @UseGuards(AuthGuard)
   async listAdmin(@Query() query: any) {
     const result = await this.listAdminUseCase.execute(query);
+    return result;
+  }
+
+  @Get('roles')
+  @UseGuards(AuthGuard)
+  async listRole() {
+    const result = await this.listRoleUseCase.execute();
+    return result;
+  }
+
+  @Post('roles/create')
+  @UseGuards(AuthGuard)
+  async createRole(@Body() createRoleDto: CreateRoleDto) {
+    const result = await this.createRoleUseCase.execute(createRoleDto);
     return result;
   }
 }

@@ -8,7 +8,7 @@ import {
 import { RoleOrmEntity } from './role-orm.entity';
 
 @Entity('permissions')
-export class RolePermissionOrmEntity extends BaseEntity {
+export class PermissionOrmEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
