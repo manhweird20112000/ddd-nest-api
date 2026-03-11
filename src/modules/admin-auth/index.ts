@@ -4,7 +4,7 @@ import { AdminModule } from '../admin';
 import { LoginUseCase } from './application/use-cases/login.use-case';
 import { AdminQueryPort } from '../admin/application/ports/admin-query.port';
 import { IJwtService } from './application/ports/jwt.port';
-import { JwtAdapter } from './infra/auth/jwt.adapter';
+import { JwtAdapter } from './infrastructure/external/jwt.adapter';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { SecretModule } from '@/infra/secret';
 import { IAdapterSecret } from '@/infra/secret/adapter';

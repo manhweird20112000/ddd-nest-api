@@ -6,7 +6,7 @@ import {
   RoleRepository,
 } from '@/modules/admin/domain';
 import { CreateAdminDto } from '../dtos/create-admin.dto';
-import { PasswordVO } from '@/shared/domain/value-objects';
+import { PasswordVO } from '@/shared/domain';
 import { Transactional } from 'typeorm-transactional';
 
 export interface CreateAdminInput extends CreateAdminDto {

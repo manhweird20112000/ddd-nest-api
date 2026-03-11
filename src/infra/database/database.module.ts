@@ -28,11 +28,10 @@ import { IAdapterSecret } from '@/infra/secret/adapter';
           logging: true,
           logger: 'advanced-console',
           migrations: [
-            'dist/modules/**/infra/database/typeorm/migrations/**/*{.ts,.js}',
+            'dist/modules/**/infrastructure/persistence/migrations/**/*{.ts,.js}',
           ],
           entities: [
-            'dist/modules/**/infra/database/typeorm/entities/**/*.entity{.ts,.js}',
-            'dist/modules/**/infra/databases/orm/entities/**/*.entity{.ts,.js}',
+            'dist/modules/**/infrastructure/persistence/entities/**/*.entity{.ts,.js}',
           ],
         };
       },

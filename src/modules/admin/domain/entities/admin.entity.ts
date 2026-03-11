@@ -1,4 +1,4 @@
-import { PasswordVO } from '@/shared/domain/value-objects';
+import { PasswordVO } from '@/shared/domain';
 import { Role } from './role.entity';
 import { AdminStatusVO } from '../value-objects/admin-status.vo';
 

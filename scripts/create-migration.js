@@ -8,7 +8,7 @@ if (!moduleName || !migrationName) {
   process.exit(1);
 }
 
-const migrationDir = `src/modules/${moduleName}/infra/database/typeorm/migrations/${migrationName}`;
+const migrationDir = `src/modules/${moduleName}/infrastructure/persistence/migrations/${migrationName}`;
 
 const command = `yarn typeorm migration:create ${path.join(migrationDir)}`;
 

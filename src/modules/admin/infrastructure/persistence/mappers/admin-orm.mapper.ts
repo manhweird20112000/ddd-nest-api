@@ -1,6 +1,6 @@
 import { Admin, AdminStatusVO, Role } from '@/modules/admin/domain';
 import { AdminOrmEntity } from '../entities/admin-orm.entity';
-import { PasswordVO } from '@/shared/domain/value-objects';
+import { PasswordVO } from '@/shared/domain';
 import { RoleOrmEntity } from '../entities/role-orm.entity';
 
 /**

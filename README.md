@@ -1,52 +1,38 @@
-# DDD NestJS API Template
+# NestJS API Template
 
-A robust and scalable NestJS API template following Domain-Driven Design (DDD) principles, clean architecture, and best practices. This template provides a solid foundation for building enterprise-grade applications with a focus on maintainability, scalability, and code quality.
+A NestJS API template following **Clean Architecture**: clear separation of concerns, dependency inversion, and maintainability without over-engineering.
 
 ## 🚀 Features
 
 ### Core Features
 
-- **Domain-Driven Design (DDD)** architecture
-  - Bounded contexts
-  - Aggregates and entities
-  - Value objects
-  - Domain events
-  - Domain services
-- **Clean Architecture** implementation
-  - Clear separation of concerns
-  - Dependency inversion
-  - Interface segregation
-  - Single responsibility principle
+- **Clean Architecture**
+  - **Domain** – entities, value objects, repository ports (no outer dependencies)
+  - **Application** – use cases, DTOs, ports (depends only on domain)
+  - **Interface** – controllers, presenters (depends on application)
+  - **Infrastructure** – repository implementations, ORM, external adapters (implements ports)
+  - Dependency rule: inner layers do not depend on outer layers; dependencies point inward
 - **TypeScript** for type safety
   - Strict type checking
-  - Advanced type features
-  - Enhanced IDE support
+  - Explicit types for parameters and return values
+  - JSDoc for public APIs
 
 ### Technical Stack
 
 - **NestJS** framework
   - Modular architecture
-  - Dependency injection
-  - Middleware support
+  - Dependency injection (ports bound to adapters in module)
   - Guards and interceptors
-- **TypeORM** for database operations
+- **TypeORM** for persistence
   - Entity relationships
   - Migrations
-  - Query builder
-  - Transactions
-- **JWT Authentication**
-  - Token-based authentication
-  - Role-based access control
-  - Refresh token mechanism
-- **Swagger** API documentation
-  - OpenAPI 3.0 specification
-  - Interactive API explorer
-  - Request/response schemas
-- **Winston** logging
-  - Multiple log levels
-  - Log rotation
-  - Custom formatters
-  - Multiple transports
+  - Transactions (e.g. `typeorm-transactional`)
+- **PostgreSQL** as primary database
+- **JWT** authentication
+  - Token-based auth
+  - Guards and decorators for current user
+- **Swagger** (OpenAPI) for API documentation
+- **Winston** for logging
 
 ### Development Tools
 
@@ -71,9 +57,8 @@ A robust and scalable NestJS API template following Domain-Driven Design (DDD) p
 - Node.js (v20 or higher)
   - Recommended: v20 LTS
   - NPM or Yarn package manager
-- MySQL database
-  - Version 8.0 or higher
-  - InnoDB engine
+- PostgreSQL database
+  - Version 12 or higher (used with TypeORM)
 - Docker (optional)
   - Docker Engine 20.10+
   - Docker Compose 2.0+
@@ -83,7 +68,7 @@ A robust and scalable NestJS API template following Domain-Driven Design (DDD) p
 - Git for version control
 - VS Code (recommended) or your preferred IDE
 - Postman or similar API testing tool
-- MySQL Workbench or similar database management tool
+- PostgreSQL client (e.g. pgAdmin, DBeaver) for database management
 
 ## 🛠 Installation
 
@@ -110,26 +95,22 @@ cp .env.example .env
 
 ```env
 # Application
-NODE_ENV=development
-PORT=3000
-API_PREFIX=api
-API_VERSION=v1
+APP_NAME=my-app
+APP_PORT=3000
 
-# Database
-DB_HOST=localhost
-DB_PORT=3306
-DB_USERNAME=root
-DB_PASSWORD=password
-DB_DATABASE=ddd_nest_api
+# Database (PostgreSQL)
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=your-password
+DB_NAME=ddd_nest_api
 
 # JWT
 JWT_SECRET=your-secret-key
-JWT_EXPIRATION=1d
-JWT_REFRESH_EXPIRATION=7d
+TOKEN_EXPIRATION=7d
 
-# Logging
+# Logging (optional)
 LOG_LEVEL=debug
-LOG_DIR=logs
 ```
 
 5. Start the development server:
@@ -138,36 +119,54 @@ LOG_DIR=logs
 yarn start:dev
 ```
 
-## 🏗 Project Structure
+## 🏗 Project Structure (Clean Architecture)
+
+Each **module** is organized into four layers. Dependencies point **inward**: Infrastructure and Interface depend on Application and Domain; Domain has no dependencies on other layers.
 
 ```
 src/
-├── modules/                    # Domain modules
-│   └── [module-name]/         # Example: users, products, orders
-│       ├── application/       # Application services
-│       │   ├── commands/      # Command handlers
-│       │   ├── queries/       # Query handlers
-│       │   └── dtos/         # Data Transfer Objects
-│       ├── domain/           # Domain layer
-│       │   ├── entities/     # Domain entities
-│       │   ├── interfaces/   # Repository interfaces
-│       │   ├── value-objects/# Value objects
-│       │   └── events/       # Domain events
-│       └── infrastructure/   # Infrastructure implementations
-│           ├── controllers/  # API controllers
-│           ├── repositories/ # Repository implementations
-│           └── services/     # External service implementations
-├── shared/                   # Shared utilities and constants
-│   ├── decorators/          # Custom decorators
-│   ├── filters/             # Exception filters
-│   ├── guards/              # Authentication guards
-│   ├── interceptors/        # Request/response interceptors
-│   └── utils/               # Utility functions
-├── infra/                   # Infrastructure configurations
-│   ├── config/              # Configuration files
-│   ├── database/            # Database configuration
-│   └── logging/             # Logging configuration
-└── main.ts                  # Application entry point
+├── modules/                                  # Feature modules
+│   └── [module-name]/                        # e.g. order, user, catalog
+│       ├── domain/                           # DOMAIN LAYER (innermost)
+│       │   ├── entities/                     # Domain entities
+│       │   ├── value-objects/                # Module-specific value objects
+│       │   └── repositories/                 # Repository ports (abstract interfaces only)
+│       ├── application/                      # APPLICATION LAYER (use cases)
+│       │   ├── use-cases/                    # One use case per application action
+│       │   ├── dtos/                         # Input DTOs (validation at boundary)
+│       │   └── ports/                        # Port interfaces (repository, external service)
+│       ├── interface/                        # INTERFACE LAYER (presentation)
+│       │   ├── controllers/                  # HTTP entrypoints → call use cases
+│       │   ├── presenters/                   # Domain/output → API response shape
+│       │   ├── guards/                       # Auth, authorization
+│       │   └── decorators/                   # Route/request decorators
+│       └── infrastructure/                   # INFRASTRUCTURE LAYER (adapters)
+│           ├── persistence/                  # Persistence
+│           │   ├── entities/                 # ORM entities (DB schema)
+│           │   ├── repositories/             # Repository implementations
+│           │   ├── mappers/                  # Domain entity ↔ ORM entity
+│           │   ├── migrations/               # DB migrations
+│           │   └── seeders/                  # Seed data
+│           └── external/                     # External service adapters (HTTP, cache, etc.)
+├── shared/                                   # Cross-cutting
+│   ├── domain/                               # Shared domain (value objects, e.g. Password, Money)
+│   │   └── value-objects/
+│   ├── common/                               # Base use case, shared interfaces
+│   ├── filters/                              # Global exception filters
+│   ├── guards/                               # Global guards
+│   ├── interceptors/                         # HTTP interceptors
+│   ├── pipes/                                # Validation pipes (class-validator)
+│   ├── decorators/                           # Shared decorators
+│   ├── exceptions/                           # Shared exception classes
+│   ├── constants/                           # Shared constants
+│   └── utils/                                # Pure utility functions
+├── infra/                                    # Global infrastructure
+│   ├── config/                               # App config (database, logger, env)
+│   ├── database/                             # DataSource, module wiring
+│   ├── secret/                               # Secrets adapter (env)
+│   └── logging/                              # Logger adapter
+├── app.module.ts
+└── main.ts                                   # Application entry point
 ```
 
 ## 🚀 Running the Application
@@ -270,54 +269,14 @@ test/
 
 ## 📦 Database Migrations
 
-### Creating Migrations
-
-```bash
-# Create a new migration
-yarn migration:create src/infra/database/migrations/CreateUsersTable
-
-# Example migration content
-export class CreateUsersTable implements MigrationInterface {
-    async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.createTable(
-            new Table({
-                name: 'users',
-                columns: [
-                    {
-                        name: 'id',
-                        type: 'uuid',
-                        isPrimary: true,
-                        generationStrategy: 'uuid',
-                        default: 'uuid_generate_v4()',
-                    },
-                    {
-                        name: 'email',
-                        type: 'varchar',
-                        isUnique: true,
-                    },
-                    {
-                        name: 'password',
-                        type: 'varchar',
-                    },
-                    {
-                        name: 'created_at',
-                        type: 'timestamp',
-                        default: 'now()',
-                    },
-                ],
-            }),
-        );
-    }
-
-    async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('users');
-    }
-}
-```
+Migrations and data source are configured in `src/infra/config/database.config.ts`. Entity and migration paths follow the module structure: `modules/*/infrastructure/persistence/`.
 
 ### Running Migrations
 
 ```bash
+# Build first (migrations run from dist)
+yarn build
+
 # Run all pending migrations
 yarn migration:run
 
@@ -356,35 +315,46 @@ The project includes pre-commit hooks for:
 - Type checking
 - Test running
 
-## 📚 Architecture
+## 📚 Clean Architecture
+
+### Dependency Rule
+
+- **Domain** and **Application** define **ports** (interfaces/abstract classes).
+- **Infrastructure** and **Interface** implement or use those ports (adapters).
+- Dependencies point **inward**: Interface and Infra → Application → Domain. Domain does not depend on any other layer.
 
 ### Domain Layer
 
-- Contains business logic and entities
-- Independent of other layers
-- Defines interfaces for repositories
-- Implements domain events
+- **Entities**: core business objects (e.g. `Admin`, `Role`).
+- **Value objects**: immutable values (e.g. `AdminStatusVO` in module; `PasswordVO`, `MoneyVO` in `shared/domain`).
+- **Repositories**: abstract ports (e.g. `AdminRepository`) for persistence; no implementation here.
+- No imports from `application`, `interface`, or `infra`; no framework or DB types.
 
-### Application Layer
+### Application Layer (Use Cases)
 
-- Orchestrates domain objects
-- Implements use cases
-- Handles transactions
-- Manages application events
+- **Use cases**: one class per application action (e.g. `CreateAdminUseCase`, `ListAdminUseCase`); each implements `execute(input) → output`.
+- **DTOs**: input validation (e.g. with `class-validator`) and transfer objects.
+- **Ports**: interfaces for secondary actors (e.g. `AdminQueryPort`, repository abstractions used by use cases).
+- Orchestrates domain entities and repository ports; contains application logic and transactions, not HTTP or DB details.
 
-### Infrastructure Layer
+### Interface Layer (Presentation / Adapters)
 
-- Implements repository interfaces
-- Handles external services
-- Manages database connections
-- Implements security features
+- **Controllers**: HTTP entrypoints; parse request, call use cases, return responses.
+- **Presenters**: map domain/output DTOs to API response shapes.
+- **Guards, decorators**: auth, current user, etc.
+- Depends on Application (use cases, DTOs), not on Infrastructure.
 
-### Presentation Layer
+### Infrastructure Layer (Adapters)
 
-- Handles HTTP requests/responses
-- Implements API versioning
-- Manages authentication
-- Formats responses
+- **ORM entities** and **repository implementations**: implement domain repository ports (e.g. `AdminRepositoryImpl`).
+- **Mappers**: domain entity ↔ ORM entity.
+- **Seeders, migrations**: DB setup.
+- **External adapters**: e.g. JWT adapter implementing an application port.
+- Implements ports defined in Domain/Application; contains all DB and external service details.
+
+### Wiring in NestJS
+
+Modules bind **ports to adapters** via `providers`: e.g. `{ provide: AdminRepository, useClass: AdminRepositoryImpl }`. Controllers inject use cases; use cases inject repository/port interfaces. The dependency injection container resolves interfaces to the concrete implementations registered in the module.
 
 ## 🤝 Contributing
 
@@ -439,8 +409,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- NestJS team for the amazing framework
-- TypeORM team for the database ORM
+- NestJS team for the framework
+- TypeORM for persistence
 - All contributors who have helped shape this template
 
 ## 📞 Support
