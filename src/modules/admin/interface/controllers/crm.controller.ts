@@ -40,7 +40,6 @@ export class CrmAdminController {
   @Permission('admin:create')
   async createAdmin(
     @Body() createAdminDto: CreateAdminDto,
-    @Req() req: Request,
     @CurrentUser() admin: any,
   ) {
     const result = await this.createAdminUseCase.execute({
@@ -52,7 +51,8 @@ export class CrmAdminController {
   }
 
   @Delete(':id/delete')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
+  @Permission('admin:delete')
   async deleteAdmin(@Param('id') id: string, @CurrentUser() admin: any) {
     const result = await this.deleteAdminUseCase.execute({
       id: +id,
@@ -62,7 +62,8 @@ export class CrmAdminController {
   }
 
   @Get('list')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
+  @Permission('admin:list')
   async listAdmin(@Query() query: any) {
     const result = await this.listAdminUseCase.execute(query);
     return result;
@@ -76,7 +77,8 @@ export class CrmAdminController {
   }
 
   @Post('roles/create')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
+  @Permission('role:create')
   async createRole(@Body() createRoleDto: CreateRoleDto) {
     const result = await this.createRoleUseCase.execute(createRoleDto);
     return result;
