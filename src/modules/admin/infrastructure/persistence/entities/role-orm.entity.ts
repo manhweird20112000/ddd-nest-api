@@ -1,10 +1,13 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { AdminOrmEntity } from './admin-orm.entity';
 import { PermissionOrmEntity } from './permission-orm.entity';
@@ -33,4 +36,13 @@ export class RoleOrmEntity extends BaseEntity {
 
   @Column({ type: 'smallint', default: 0 })
   is_default: number;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  delete_at?: Date;
 }

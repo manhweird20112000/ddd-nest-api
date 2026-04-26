@@ -12,5 +12,5 @@ export class SecretService extends ConfigService implements IAdapterSecret {
   JWT_SECRET = this.get('JWT_SECRET');
   TOKEN_EXPIRATION = this.get('TOKEN_EXPIRATION');
 
-  STRIPE_API_KEY = this.get('STRIPE_API_KEY');
+  OPENAI_API_KEY = this.get('OPENAI_API_KEY');
 }
