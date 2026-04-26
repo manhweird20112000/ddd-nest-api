@@ -3,7 +3,9 @@ import { PermissionOrmEntity } from "../entities/permission-orm.entity";
 import { In, Repository } from "typeorm";
 import { Permission, PermissionRepository } from "@/modules/admin/domain";
 import { PermissionOrmMapper } from "../mappers/permission-orm.mapper";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class PermissionRepositoryImpl implements PermissionRepository {
   constructor(
     @InjectRepository(PermissionOrmEntity)

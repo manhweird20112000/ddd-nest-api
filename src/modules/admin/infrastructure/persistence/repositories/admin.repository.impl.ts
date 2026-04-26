@@ -1,10 +1,11 @@
 import { Admin, AdminRepository } from '@/modules/admin/domain';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
 import { IsNull, Repository } from 'typeorm';
 import { AdminOrmEntity } from '../entities/admin-orm.entity';
 import { AdminOrmMapper } from '../mappers/admin-orm.mapper';
-import { paginate } from 'nestjs-paginate';
 
+@Injectable()
 export class AdminRepositoryImpl implements AdminRepository {
   private readonly mapper = new AdminOrmMapper();
 
@@ -14,18 +15,12 @@ export class AdminRepositoryImpl implements AdminRepository {
   ) {}
 
   async list(query: Record<string, any>): Promise<Admin[]> {
-    //  const { page, limit } = query;
+    const orms = await this.adminRepository.find({
+      where: { delete_at: IsNull() },
+      relations: ['roles'],
+    });
 
-    //  const result = await paginate({
-    //    page, limit,
-    //    path: ''
-    //  }, this.adminRepository, {
-    //   sortableColumns: ['id'],
-    //   searchableColumns: ['name', 'email'],
-    //   defaultSortBy: [['id', 'DESC']],
-    //  })
-
-    return [];
+    return orms.map((orm) => this.mapper.toDomain(orm));
   }
 
   async delete(id: number, adminId: number): Promise<boolean> {
@@ -55,7 +50,10 @@ export class AdminRepositoryImpl implements AdminRepository {
   }
 
   async findByEmail(email: string): Promise<Admin | null> {
-    const orm = await this.adminRepository.findOne({ where: { email } });
+    const orm = await this.adminRepository.findOne({
+      where: { email },
+      relations: ['roles.permissions'],
+    });
     return orm ? this.mapper.toDomain(orm) : null;
   }
 }

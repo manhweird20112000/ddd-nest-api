@@ -8,11 +8,13 @@ import {
 import { CreateAdminDto } from '../dtos/create-admin.dto';
 import { PasswordVO } from '@/shared/domain';
 import { Transactional } from 'typeorm-transactional';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 
 export interface CreateAdminInput extends CreateAdminDto {
   createdBy?: number;
 }
 
+@Injectable()
 export class CreateAdminUseCase
   implements BaseUseCase<CreateAdminInput, Admin>
 {
@@ -25,13 +27,13 @@ export class CreateAdminUseCase
   async execute(input: CreateAdminInput): Promise<Admin> {
     const existing = await this.adminRepository.findByEmail(input.email);
     if (existing) {
-      throw new Error('Admin with this email already exists');
+      throw new ConflictException('Admin with this email already exists');
     }
 
     const roles = await this.roleRepository.findByIds(input.role_ids);
 
     if (!roles.length) {
-      throw new Error('Roles not found');
+      throw new NotFoundException('Roles not found');
     }
 
     const password = await PasswordVO.hash(input.password);

@@ -11,14 +11,14 @@ import { IAdapterSecret } from '@/infra/secret/adapter';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      useFactory: ({ POSTGRES_URI }: IAdapterSecret) => {
+      useFactory: ({ POSTGRES_URI, POSTGRES_SYNC }: IAdapterSecret) => {
         return {
           type: 'postgres',
           url: POSTGRES_URI,
           timeout: 5000,
           connectionTimeout: 5000,
           autoLoadEntities: true,
-          synchronize: true,
+          synchronize: POSTGRES_SYNC,
           migrationsTableName: 'migration_collection',
           extra: {
             charset: 'utf8mb4_unicode_ci',

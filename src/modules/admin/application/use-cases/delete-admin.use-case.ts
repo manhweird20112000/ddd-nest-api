@@ -1,12 +1,13 @@
 import { BaseUseCase } from '@/shared/common/base-use-case';
 import { AdminRepository } from '../../domain';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 interface Input {
   id: number;
   adminId: number;
 }
 
+@Injectable()
 export class DeleteAdminUseCase implements BaseUseCase<Input, boolean> {
   constructor(private readonly adminRepository: AdminRepository) {}
 
@@ -14,7 +15,7 @@ export class DeleteAdminUseCase implements BaseUseCase<Input, boolean> {
     const admin = await this.adminRepository.findById(input.id);
 
     if (!admin) {
-      throw new NotFoundException();
+      throw new NotFoundException('Admin not found');
     }
 
     if (admin.id === input.adminId) {

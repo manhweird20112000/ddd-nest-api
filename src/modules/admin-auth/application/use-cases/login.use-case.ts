@@ -3,12 +3,15 @@ import { BaseUseCase } from '@/shared/common/base-use-case';
 import { LoginDto } from '../dtos/login.dto';
 import { IJwtService } from '../ports/jwt.port';
 import { InvalidCredentialsException } from '@/shared/exceptions';
+import { Injectable } from '@nestjs/common';
 
 type Input = LoginDto;
 interface Output {
   access_token: string;
   refresh_token: string;
 }
+
+@Injectable()
 export class LoginUseCase implements BaseUseCase<Input, Output> {
   constructor(
     private readonly adminQueryService: AdminQueryPort,

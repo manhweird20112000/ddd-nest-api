@@ -2,12 +2,14 @@ import { JwtService } from '@nestjs/jwt';
 import type { JwtSignOptions } from '@nestjs/jwt';
 import { IJwtService } from '../../application/ports/jwt.port';
 import { IAdapterSecret } from '@/infra/secret/adapter';
+import { Injectable } from '@nestjs/common';
 
-interface JwtPayload {
+export interface JwtPayload {
   sub: string;
   email: string;
 }
 
+@Injectable()
 export class JwtAdapter implements IJwtService {
   constructor(
     private readonly jwtService: JwtService,

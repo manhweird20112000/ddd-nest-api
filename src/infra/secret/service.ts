@@ -9,6 +9,8 @@ export class SecretService extends ConfigService implements IAdapterSecret {
     'DB_PASSWORD',
   )}@${this.get('DB_HOST')}:${this.get('DB_PORT')}/${this.get('DB_NAME')}`;
 
+  POSTGRES_SYNC = this.get('DB_SYNC') === 'true';
+
   JWT_SECRET = this.get('JWT_SECRET');
   TOKEN_EXPIRATION = this.get('TOKEN_EXPIRATION');
 

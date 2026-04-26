@@ -3,7 +3,9 @@ import { RoleOrmEntity } from '../entities/role-orm.entity';
 import { In, Repository } from 'typeorm';
 import { Role, RoleRepository } from '@/modules/admin/domain';
 import { RoleOrmMapper } from '../mappers/role-orm.mapper';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class RoleRepositoryImpl implements RoleRepository {
   constructor(
     @InjectRepository(RoleOrmEntity)

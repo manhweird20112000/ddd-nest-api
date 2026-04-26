@@ -3,6 +3,7 @@ export abstract class IAdapterSecret {
   APP_PORT: number;
 
   POSTGRES_URI: string;
+  POSTGRES_SYNC: boolean;
 
   JWT_SECRET: string;
   TOKEN_EXPIRATION: string;

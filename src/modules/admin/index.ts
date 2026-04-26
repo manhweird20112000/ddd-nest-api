@@ -18,6 +18,7 @@ import { PermissionOrmEntity } from './infrastructure/persistence/entities/permi
 import { ListRoleUseCase } from './application/use-cases/list-role.use-case';
 import { PermissionRepositoryImpl } from './infrastructure/persistence/repositories/permission.repository.impl';
 import { CreateRoleUseCase } from './application/use-cases/create-role.use-case';
+
 @Module({
   imports: [
     forwardRef(() => AdminAuthModule),
@@ -43,52 +44,13 @@ import { CreateRoleUseCase } from './application/use-cases/create-role.use-case'
     },
     {
       provide: AdminQueryPort,
-      inject: [AdminRepository],
-      useFactory(adminRepository: AdminRepository) {
-        return new AdminQueryService(adminRepository);
-      },
+      useClass: AdminQueryService,
     },
-    {
-      provide: CreateAdminUseCase,
-      inject: [AdminRepository, RoleRepository],
-      useFactory(
-        adminRepository: AdminRepository,
-        roleRepository: RoleRepository,
-      ) {
-        return new CreateAdminUseCase(adminRepository, roleRepository);
-      },
-    },
-    {
-      provide: DeleteAdminUseCase,
-      inject: [AdminRepository],
-      useFactory(adminRepository: AdminRepository) {
-        return new DeleteAdminUseCase(adminRepository);
-      },
-    },
-    {
-      provide: ListAdminUseCase,
-      inject: [AdminRepository],
-      useFactory(adminRepository: AdminRepository) {
-        return new ListAdminUseCase(adminRepository);
-      },
-    },
-    {
-      provide: ListRoleUseCase,
-      inject: [RoleRepository],
-      useFactory(roleRepository: RoleRepository) {
-        return new ListRoleUseCase(roleRepository);
-      },
-    },
-    {
-      provide: CreateRoleUseCase,
-      inject: [RoleRepository, PermissionRepository],
-      useFactory(
-        roleRepository: RoleRepository,
-        permissionRepository: PermissionRepository,
-      ) {
-        return new CreateRoleUseCase(roleRepository, permissionRepository);
-      },
-    },
+    CreateAdminUseCase,
+    DeleteAdminUseCase,
+    ListAdminUseCase,
+    ListRoleUseCase,
+    CreateRoleUseCase,
   ],
   exports: [AdminQueryPort],
 })
