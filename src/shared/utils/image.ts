@@ -1,7 +1,7 @@
-import * as uuid from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 import * as process from 'node:process';
 
 type IImageOptionType = 'original' | '16x9' | '4x3' | 'square';
@@ -41,7 +41,7 @@ export class ImageUtils {
       fs.mkdirSync(pathStorage, { recursive: true });
     }
 
-    const filename = uuid.v7() + '.webp';
+    const filename = uuidv7() + '.webp';
 
     const metadata = await this.getCropMetadata(file, type);
 
