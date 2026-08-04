@@ -18,6 +18,7 @@ import { PermissionOrmEntity } from './infrastructure/persistence/entities/permi
 import { ListRoleUseCase } from './application/use-cases/list-role.use-case';
 import { PermissionRepositoryImpl } from './infrastructure/persistence/repositories/permission.repository.impl';
 import { CreateRoleUseCase } from './application/use-cases/create-role.use-case';
+import { AdminResolver } from './interface/graphql/resolvers/admin.resolver';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { CreateRoleUseCase } from './application/use-cases/create-role.use-case'
     ListAdminUseCase,
     ListRoleUseCase,
     CreateRoleUseCase,
+    AdminResolver,
   ],
   exports: [AdminQueryPort],
 })

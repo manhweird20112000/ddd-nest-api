@@ -10,7 +10,7 @@ export class PermissionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = this.getRequest(context);
     const permission = this.reflector.get<string>(
       'permissions',
       context.getHandler(),
@@ -24,5 +24,12 @@ export class PermissionGuard implements CanActivate {
     );
 
     return permissions.includes(permission);
+  }
+
+  /**
+   * Resolves the incoming request; overridden by transport-specific subclasses.
+   */
+  protected getRequest(context: ExecutionContext) {
+    return context.switchToHttp().getRequest();
   }
 }

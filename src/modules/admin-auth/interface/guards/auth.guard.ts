@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
   constructor(private readonly jwtService: IJwtService) {}
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    const request = this.getRequest(context);
 
     const authHeader = request.headers.authorization;
 
@@ -26,5 +26,12 @@ export class AuthGuard implements CanActivate {
     request.user = payload;
 
     return true;
+  }
+
+  /**
+   * Resolves the incoming request; overridden by transport-specific subclasses.
+   */
+  protected getRequest(context: ExecutionContext) {
+    return context.switchToHttp().getRequest();
   }
 }

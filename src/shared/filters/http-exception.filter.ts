@@ -9,6 +9,9 @@ import {
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): any {
+    if (host.getType() !== 'http') {
+      throw exception;
+    }
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 

@@ -4,6 +4,7 @@ import { DatabaseModule } from '@/infra/database/database.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from '@/infra/config/logger.config';
 import { ContainerModules } from './modules';
+import { GraphqlModule } from '@/infra/graphql/graphql.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'node:path';
 import { AppController } from './app.controller';
@@ -23,6 +24,7 @@ import { AppController } from './app.controller';
     WinstonModule.forRoot(winstonConfig),
     SecretModule,
     DatabaseModule,
+    GraphqlModule,
     ContainerModules,
   ],
   controllers: [AppController],
