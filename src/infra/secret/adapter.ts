@@ -5,8 +5,6 @@ export abstract class IAdapterSecret {
   POSTGRES_URI: string;
   POSTGRES_SYNC: boolean;
 
-  JWT_SECRET: string;
-  TOKEN_EXPIRATION: string;
-
-  STRIPE_API_KEY: string;
+  RABBITMQ_URL: string;
+  RABBITMQ_USER_QUEUE: string;
 }

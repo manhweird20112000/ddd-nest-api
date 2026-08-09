@@ -8,31 +8,28 @@ import {
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost): any {
+  catch(exception: unknown, host: ArgumentsHost): void {
+    if (host.getType() !== 'http') {
+      throw exception;
+    }
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
-
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
-
     const message =
       exception instanceof Error ? exception.message : 'Internal server error';
-
     const errors =
       exception instanceof HttpException &&
       status === HttpStatus.BAD_REQUEST &&
       typeof exception.getResponse() === 'object'
-        ? (exception.getResponse() as { data?: unknown }).data ?? null
+        ? ((exception.getResponse() as { data?: unknown }).data ?? null)
         : null;
-
-    const errorResp = {
+    response.status(status).json({
       status_code: status,
       message,
       data: errors,
-    };
-
-    return response.status(status).json(errorResp);
+    });
   }
 }

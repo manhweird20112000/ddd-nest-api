@@ -11,30 +11,24 @@ import { IAdapterSecret } from '@/infra/secret/adapter';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      useFactory: ({ POSTGRES_URI, POSTGRES_SYNC }: IAdapterSecret) => {
-        return {
-          type: 'postgres',
-          url: POSTGRES_URI,
-          timeout: 5000,
-          connectionTimeout: 5000,
-          autoLoadEntities: true,
-          synchronize: POSTGRES_SYNC,
-          migrationsTableName: 'migration_collection',
-          extra: {
-            charset: 'utf8mb4_unicode_ci',
-          },
-          timezone: '+07:00',
-          // debug: true,
-          logging: true,
-          logger: 'advanced-console',
-          migrations: [
-            'dist/modules/**/infrastructure/persistence/migrations/**/*{.ts,.js}',
-          ],
-          entities: [
-            'dist/modules/**/infrastructure/persistence/entities/**/*.entity{.ts,.js}',
-          ],
-        };
-      },
+      useFactory: ({ POSTGRES_URI, POSTGRES_SYNC }: IAdapterSecret) => ({
+        type: 'postgres' as const,
+        url: POSTGRES_URI,
+        timeout: 5000,
+        connectionTimeout: 5000,
+        autoLoadEntities: true,
+        synchronize: POSTGRES_SYNC,
+        migrationsTableName: 'migration_collection',
+        timezone: '+07:00',
+        logging: true,
+        logger: 'advanced-console' as const,
+        migrations: [
+          'dist/modules/**/infrastructure/persistence/migrations/**/*{.ts,.js}',
+        ],
+        entities: [
+          'dist/modules/**/infrastructure/persistence/entities/**/*.entity{.ts,.js}',
+        ],
+      }),
       async dataSourceFactory(options: DataSourceOptions) {
         return (
           getDataSourceByName('default') ||

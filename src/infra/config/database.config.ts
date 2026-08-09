@@ -12,11 +12,7 @@ const dataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   migrationsTableName: 'migration_collection',
-  extra: {
-    charset: 'utf8mb4_unicode_ci',
-  },
-  synchronize: true,
-  // debug: true,
+  synchronize: false,
   logging: true,
   logger: 'advanced-console',
   migrations: [

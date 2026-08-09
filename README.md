@@ -54,9 +54,9 @@ A NestJS API template following **Clean Architecture**: clear separation of conc
 
 ### Required Software
 
-- Node.js (v20 or higher)
-  - Recommended: v20 LTS
-  - NPM or Yarn package manager
+- Node.js (v26 or higher)
+  - Recommended: v26
+  - pnpm package manager
 - PostgreSQL database
   - Version 12 or higher (used with TypeORM)
 - Docker (optional)

@@ -8,19 +8,20 @@ import {
 import { map, Observable } from 'rxjs';
 
 @Injectable()
-export class HttpSuccessInterceptor<T> implements NestInterceptor<T, any> {
+export class HttpSuccessInterceptor<T> implements NestInterceptor<T, unknown> {
   intercept(
     context: ExecutionContext,
     next: CallHandler<T>,
-  ): Observable<any> | Promise<Observable<any>> {
+  ): Observable<unknown> {
+    if (context.getType() !== 'http') {
+      return next.handle();
+    }
     return next.handle().pipe(
-      map((data) => {
-        return {
-          status_code: HttpStatus.OK,
-          data: data,
-          message: 'Successfully.',
-        };
-      }),
+      map((data) => ({
+        status_code: HttpStatus.OK,
+        data,
+        message: 'Successfully.',
+      })),
     );
   }
 }
