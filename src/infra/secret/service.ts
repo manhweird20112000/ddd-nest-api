@@ -15,7 +15,4 @@ export class SecretService extends ConfigService implements IAdapterSecret {
   LIVE_SERVICE_URL = this.get('LIVE_SERVICE_URL');
   CHAT_SERVICE_URL = this.get('CHAT_SERVICE_URL');
   MEDIA_SERVICE_URL = this.get('MEDIA_SERVICE_URL');
-
-  MATH_SERVICE_HOST = this.get('MATH_SERVICE_HOST');
-  MATH_SERVICE_PORT = Number(this.get('MATH_SERVICE_PORT'));
 }

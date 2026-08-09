@@ -12,7 +12,4 @@ export abstract class IAdapterSecret {
   LIVE_SERVICE_URL: string;
   CHAT_SERVICE_URL: string;
   MEDIA_SERVICE_URL: string;
-
-  MATH_SERVICE_HOST: string;
-  MATH_SERVICE_PORT: number;
 }

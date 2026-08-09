@@ -7,7 +7,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'node:path';
 import { AppController } from './app.controller';
 import { RequestIdMiddleware } from './middleware/request-id.middleware';
-import { MathModule } from '@/modules/math/math.module';
+import { UserAuthModule } from './modules/user-auth/user-auth.module';
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { MathModule } from '@/modules/math/math.module';
     WinstonModule.forRoot(winstonConfig),
     SecretModule,
     HealthModule,
-    MathModule,
+    UserAuthModule,
   ],
   controllers: [AppController],
   providers: [],
