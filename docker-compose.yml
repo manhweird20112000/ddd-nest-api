@@ -1,35 +1,40 @@
 services:
-  math-service:
-    build:
-      context: ../math-service
-      dockerfile: Dockerfile
-    image: math-service:local
-    environment:
-      MATH_SERVICE_HOST: 0.0.0.0
-      MATH_SERVICE_PORT: 3001
-    expose:
-      - "3001"
+  postgres:
+    image: postgres:16-alpine
+    container_name: auth-service-postgres
     restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-auth_service}
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-  api-gateway:
+  auth-service:
     build:
       context: .
       dockerfile: Dockerfile
-    image: api-gateway:local
-    ports:
-      - "${APP_PORT:-3000}:${APP_PORT:-3000}"
-    env_file:
-      - .env.prod
-    environment:
-      NODE_ENV: production
-      MATH_SERVICE_HOST: math-service
-      MATH_SERVICE_PORT: 3001
-    depends_on:
-      - math-service
-    healthcheck:
-      test: ['CMD-SHELL', 'curl -fsS "http://127.0.0.1:$${APP_PORT:-3000}/health" || exit 1']
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
+    container_name: auth-service
     restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      MS_HOST: 0.0.0.0
+    ports:
+      - '${APP_PORT:-3000}:${APP_PORT:-3000}'
+      - '${MS_PORT:-3001}:${MS_PORT:-3001}'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

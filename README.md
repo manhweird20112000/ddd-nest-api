@@ -1,426 +1,182 @@
-# NestJS API Template
+# Auth Service
 
-A NestJS API template following **Clean Architecture**: clear separation of concerns, dependency inversion, and maintainability without over-engineering.
+NestJS **auth microservice** (hybrid): HTTP API + TCP message patterns. Clean Architecture (Domain → Application → Interface → Infrastructure).
 
-## 🚀 Features
+Docs: [NestJS Microservices basics](https://docs.nestjs.com/microservices/basics)
 
-### Core Features
+## Stack
 
-- **Clean Architecture**
-  - **Domain** – entities, value objects, repository ports (no outer dependencies)
-  - **Application** – use cases, DTOs, ports (depends only on domain)
-  - **Interface** – controllers, presenters (depends on application)
-  - **Infrastructure** – repository implementations, ORM, external adapters (implements ports)
-  - Dependency rule: inner layers do not depend on outer layers; dependencies point inward
-- **TypeScript** for type safety
-  - Strict type checking
-  - Explicit types for parameters and return values
-  - JSDoc for public APIs
+- NestJS 11, TypeScript
+- TypeORM + PostgreSQL
+- JWT (`@nestjs/jwt`)
+- Hybrid transport: HTTP + TCP
+- Winston logging, Swagger-ready layout
+- Docker Compose (app + Postgres)
 
-### Technical Stack
+## Prerequisites
 
-- **NestJS** framework
-  - Modular architecture
-  - Dependency injection (ports bound to adapters in module)
-  - Guards and interceptors
-- **TypeORM** for persistence
-  - Entity relationships
-  - Migrations
-  - Transactions (e.g. `typeorm-transactional`)
-- **PostgreSQL** as primary database
-- **JWT** authentication
-  - Token-based auth
-  - Guards and decorators for current user
-- **Swagger** (OpenAPI) for API documentation
-- **Winston** for logging
+- Node.js 20+
+- Yarn
+- Docker & Docker Compose (optional, recommended)
+- PostgreSQL 12+ (if chạy local không Docker)
 
-### Development Tools
-
-- **Jest** testing framework
-  - Unit testing
-  - Integration testing
-  - E2E testing
-  - Code coverage
-- **ESLint** & **Prettier** for code quality
-  - Code style enforcement
-  - Best practices checking
-  - Automatic formatting
-- **Docker** support
-  - Development environment
-  - Production deployment
-  - Multi-stage builds
-
-## 📋 Prerequisites
-
-### Required Software
-
-- Node.js (v20 or higher)
-  - Recommended: v20 LTS
-  - NPM or Yarn package manager
-- PostgreSQL database
-  - Version 12 or higher (used with TypeORM)
-- Docker (optional)
-  - Docker Engine 20.10+
-  - Docker Compose 2.0+
-
-### Development Environment
-
-- Git for version control
-- VS Code (recommended) or your preferred IDE
-- Postman or similar API testing tool
-- PostgreSQL client (e.g. pgAdmin, DBeaver) for database management
-
-## 🛠 Installation
-
-1. Clone the repository:
-
-```bash
-git clone [repository-url]
-cd ddd-nest-api
-```
-
-2. Install dependencies:
-
-```bash
-yarn install
-```
-
-3. Create a `.env` file in the root directory:
+## Quick start (Docker)
 
 ```bash
 cp .env.example .env
+# chỉnh JWT_SECRET / DB_* nếu cần
+
+docker compose up -d --build
 ```
 
-4. Update the environment variables in `.env` file with your configuration:
+| Service        | URL / port                          |
+|----------------|-------------------------------------|
+| HTTP API       | `http://localhost:3000`             |
+| TCP microservice | `localhost:3001`                  |
+| Postgres       | `localhost:5432`                    |
+| Health/root    | `GET /`                             |
 
-```env
-# Application
-APP_NAME=my-app
-APP_PORT=3000
-
-# Database (PostgreSQL)
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=your-password
-DB_NAME=ddd_nest_api
-
-# JWT
-JWT_SECRET=your-secret-key
-TOKEN_EXPIRATION=7d
-
-# Logging (optional)
-LOG_LEVEL=debug
-```
-
-5. Start the development server:
+Logs:
 
 ```bash
+docker compose logs -f auth-service
+```
+
+Stop:
+
+```bash
+docker compose down
+```
+
+## Local development (without Docker)
+
+```bash
+cp .env.example .env
+yarn install
+# đảm bảo Postgres đang chạy và khớp DB_* trong .env
 yarn start:dev
 ```
 
-## 🏗 Project Structure (Clean Architecture)
+HTTP: `APP_PORT` (default `3000`)  
+TCP: `MS_HOST` / `MS_PORT` (default `0.0.0.0:3001`)
 
-Each **module** is organized into four layers. Dependencies point **inward**: Infrastructure and Interface depend on Application and Domain; Domain has no dependencies on other layers.
+## Environment
 
-```
-src/
-├── modules/                                  # Feature modules
-│   └── [module-name]/                        # e.g. order, user, catalog
-│       ├── domain/                           # DOMAIN LAYER (innermost)
-│       │   ├── entities/                     # Domain entities
-│       │   ├── value-objects/                # Module-specific value objects
-│       │   └── repositories/                 # Repository ports (abstract interfaces only)
-│       ├── application/                      # APPLICATION LAYER (use cases)
-│       │   ├── use-cases/                    # One use case per application action
-│       │   ├── dtos/                         # Input DTOs (validation at boundary)
-│       │   └── ports/                        # Port interfaces (repository, external service)
-│       ├── interface/                        # INTERFACE LAYER (presentation)
-│       │   ├── controllers/                  # HTTP entrypoints → call use cases
-│       │   ├── presenters/                   # Domain/output → API response shape
-│       │   ├── guards/                       # Auth, authorization
-│       │   └── decorators/                   # Route/request decorators
-│       └── infrastructure/                   # INFRASTRUCTURE LAYER (adapters)
-│           ├── persistence/                  # Persistence
-│           │   ├── entities/                 # ORM entities (DB schema)
-│           │   ├── repositories/             # Repository implementations
-│           │   ├── mappers/                  # Domain entity ↔ ORM entity
-│           │   ├── migrations/               # DB migrations
-│           │   └── seeders/                  # Seed data
-│           └── external/                     # External service adapters (HTTP, cache, etc.)
-├── shared/                                   # Cross-cutting
-│   ├── domain/                               # Shared domain (value objects, e.g. Password, Money)
-│   │   └── value-objects/
-│   ├── common/                               # Base use case, shared interfaces
-│   ├── filters/                              # Global exception filters
-│   ├── guards/                               # Global guards
-│   ├── interceptors/                         # HTTP interceptors
-│   ├── pipes/                                # Validation pipes (class-validator)
-│   ├── decorators/                           # Shared decorators
-│   ├── exceptions/                           # Shared exception classes
-│   ├── constants/                           # Shared constants
-│   └── utils/                                # Pure utility functions
-├── infra/                                    # Global infrastructure
-│   ├── config/                               # App config (database, logger, env)
-│   ├── database/                             # DataSource, module wiring
-│   ├── secret/                               # Secrets adapter (env)
-│   └── logging/                              # Logger adapter
-├── app.module.ts
-└── main.ts                                   # Application entry point
+| Variable           | Description                          | Default        |
+|--------------------|--------------------------------------|----------------|
+| `APP_NAME`         | Service name                         | `auth-service` |
+| `APP_PORT`         | HTTP listen port                     | `3000`         |
+| `MS_HOST`          | TCP bind host                        | `0.0.0.0`      |
+| `MS_PORT`          | TCP listen port                      | `3001`         |
+| `DB_HOST`          | Postgres host                        | `127.0.0.1`    |
+| `DB_PORT`          | Postgres port                        | `5432`         |
+| `DB_USER`          | Postgres user                        | `postgres`     |
+| `DB_PASSWORD`      | Postgres password                    | —              |
+| `DB_NAME`          | Database name                        | `auth_service` |
+| `DB_SYNC`          | TypeORM synchronize (`true`/`false`) | `true`         |
+| `JWT_SECRET`       | JWT signing secret                   | —              |
+| `TOKEN_EXPIRATION` | Access/refresh token TTL             | `7d`           |
+
+Trong Docker Compose, `DB_HOST` được override thành `postgres`.
+
+## User Auth (placeholder)
+
+In-memory user (no DB yet):
+
+| Field    | Value               |
+|----------|---------------------|
+| id       | `1`                 |
+| email    | `user@example.com`  |
+| password | `password123`       |
+
+### HTTP
+
+```http
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{ "email": "user@example.com", "password": "password123" }
 ```
 
-## 🚀 Running the Application
+Response:
 
-### Development
+```json
+{
+  "access_token": "...",
+  "refresh_token": "..."
+}
+```
+
+### TCP Message Patterns
+
+Gateway / client gọi TCP (`MS_PORT`):
+
+| Pattern                         | Payload               | Result                            |
+|---------------------------------|-----------------------|-----------------------------------|
+| `{ cmd: 'user.auth.login' }`    | `{ email, password }` | `{ access_token, refresh_token }` |
+| `{ cmd: 'user.auth.validate' }` | `{ token }`           | `{ sub, email }`                  |
+
+Ví dụ client NestJS:
+
+```typescript
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
+
+const client = ClientProxyFactory.create({
+  transport: Transport.TCP,
+  options: { host: '127.0.0.1', port: 3001 },
+});
+
+await client.connect();
+const tokens = await firstValueFrom(
+  client.send(
+    { cmd: 'user.auth.login' },
+    { email: 'user@example.com', password: 'password123' },
+  ),
+);
+const payload = await firstValueFrom(
+  client.send({ cmd: 'user.auth.validate' }, { token: tokens.access_token }),
+);
+```
+
+Lỗi credentials / token invalid trả về `RpcException`.
+
+## Scripts
 
 ```bash
-# Start development server with hot-reload
-yarn start:dev
-
-# Start with debug mode
-yarn start:debug
-
-# Start with SWC compiler (faster)
-yarn start:swc
-```
-
-### Production
-
-```bash
-# Build the application
-yarn build
-
-# Start production server
-yarn start:prod
-```
-
-### Docker
-
-```bash
-# Build and start containers
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop containers
-docker-compose down
-```
-
-## 📝 API Documentation
-
-### Swagger UI
-
-Once the application is running, access the Swagger documentation at:
-
-```
-http://localhost:3000/api
-```
-
-### API Versioning
-
-The API supports versioning through the URL path:
-
-```
-http://localhost:3000/api/v1/[resource]
-```
-
-### Authentication
-
-Most endpoints require JWT authentication. Include the token in the Authorization header:
-
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-## 🧪 Testing
-
-### Unit Tests
-
-```bash
-# Run all unit tests
-yarn test
-
-# Run tests in watch mode
-yarn test:watch
-
-# Run tests with coverage
-yarn test:cov
-```
-
-### E2E Tests
-
-```bash
-# Run all e2e tests
-yarn test:e2e
-
-# Run specific e2e test file
-yarn test:e2e --testPathPattern=auth.e2e-spec.ts
-```
-
-### Test Structure
-
-```
-test/
-├── unit/              # Unit tests
-├── integration/       # Integration tests
-└── e2e/              # End-to-end tests
-```
-
-## 📦 Database Migrations
-
-Migrations and data source are configured in `src/infra/config/database.config.ts`. Entity and migration paths follow the module structure: `modules/*/infrastructure/persistence/`.
-
-### Running Migrations
-
-```bash
-# Build first (migrations run from dist)
-yarn build
-
-# Run all pending migrations
-yarn migration:run
-
-# Revert last migration
-yarn migration:revert
-
-# Run seeders
+yarn start:dev      # watch mode
+yarn start:debug    # debug
+yarn build          # compile
+yarn start:prod     # node dist/main
+yarn test           # unit tests
+yarn test:e2e       # e2e
+yarn lint
+yarn migration:run  # after yarn build
 yarn seed:run
 ```
 
-## 🔧 Code Quality
-
-### Linting
-
-```bash
-# Run linter
-yarn lint
-
-# Fix linting issues automatically
-yarn lint --fix
-```
-
-### Formatting
-
-```bash
-# Format code
-yarn format
-```
-
-### Pre-commit Hooks
-
-The project includes pre-commit hooks for:
-
-- Linting
-- Formatting
-- Type checking
-- Test running
-
-## 📚 Clean Architecture
-
-### Dependency Rule
-
-- **Domain** and **Application** define **ports** (interfaces/abstract classes).
-- **Infrastructure** and **Interface** implement or use those ports (adapters).
-- Dependencies point **inward**: Interface and Infra → Application → Domain. Domain does not depend on any other layer.
-
-### Domain Layer
-
-- **Entities**: core business objects (e.g. `Admin`, `Role`).
-- **Value objects**: immutable values (e.g. `AdminStatusVO` in module; `PasswordVO`, `MoneyVO` in `shared/domain`).
-- **Repositories**: abstract ports (e.g. `AdminRepository`) for persistence; no implementation here.
-- No imports from `application`, `interface`, or `infra`; no framework or DB types.
-
-### Application Layer (Use Cases)
-
-- **Use cases**: one class per application action (e.g. `CreateAdminUseCase`, `ListAdminUseCase`); each implements `execute(input) → output`.
-- **DTOs**: input validation (e.g. with `class-validator`) and transfer objects.
-- **Ports**: interfaces for secondary actors (e.g. `AdminQueryPort`, repository abstractions used by use cases).
-- Orchestrates domain entities and repository ports; contains application logic and transactions, not HTTP or DB details.
-
-### Interface Layer (Presentation / Adapters)
-
-- **Controllers**: HTTP entrypoints; parse request, call use cases, return responses.
-- **Presenters**: map domain/output DTOs to API response shapes.
-- **Guards, decorators**: auth, current user, etc.
-- Depends on Application (use cases, DTOs), not on Infrastructure.
-
-### Infrastructure Layer (Adapters)
-
-- **ORM entities** and **repository implementations**: implement domain repository ports (e.g. `AdminRepositoryImpl`).
-- **Mappers**: domain entity ↔ ORM entity.
-- **Seeders, migrations**: DB setup.
-- **External adapters**: e.g. JWT adapter implementing an application port.
-- Implements ports defined in Domain/Application; contains all DB and external service details.
-
-### Wiring in NestJS
-
-Modules bind **ports to adapters** via `providers`: e.g. `{ provide: AdminRepository, useClass: AdminRepositoryImpl }`. Controllers inject use cases; use cases inject repository/port interfaces. The dependency injection container resolves interfaces to the concrete implementations registered in the module.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch:
-
-```bash
-git checkout -b feature/amazing-feature
-```
-
-3. Commit your changes:
-
-```bash
-git commit -m 'Add some amazing feature'
-```
-
-4. Push to the branch:
-
-```bash
-git push origin feature/amazing-feature
-```
-
-5. Open a Pull Request
-
-### Commit Message Convention
+## Project structure
 
 ```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
+src/
+├── modules/           # Feature modules (user-auth, ...)
+│   └── [module]/
+│       ├── domain/
+│       ├── application/
+│       ├── interface/     # HTTP controllers + MS controllers
+│       └── infrastructure/
+├── shared/
+├── infra/             # config, database, secret, logging
+├── app.module.ts
+└── main.ts            # Hybrid HTTP + TCP bootstrap
 ```
 
-Types:
+## Architecture notes
 
-- feat: New feature
-- fix: Bug fix
-- docs: Documentation
-- style: Formatting
-- refactor: Code restructuring
-- test: Adding tests
-- chore: Maintenance
+- **Hybrid app**: `NestFactory.create` + `connectMicroservice(Transport.TCP)` + `startAllMicroservices()` + `listen()`.
+- **Use cases** stay in Application; MS controller chỉ adapt payload ↔ use case / JWT port.
+- Dependencies point inward (Clean Architecture).
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Authors
-
-- hs.weird
-
-## 🙏 Acknowledgments
-
-- NestJS team for the framework
-- TypeORM for persistence
-- All contributors who have helped shape this template
-
-## 📞 Support
-
-For support, please:
-
-1. Check the [documentation](docs/)
-2. Search [existing issues](issues)
-3. Create a new issue if needed
-
-## 🔄 Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for a list of changes.
+UNLICENSED / private.

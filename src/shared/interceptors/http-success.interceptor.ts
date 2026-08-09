@@ -13,8 +13,7 @@ export class HttpSuccessInterceptor<T> implements NestInterceptor<T, any> {
     context: ExecutionContext,
     next: CallHandler<T>,
   ): Observable<any> | Promise<Observable<any>> {
-    const request = context.switchToHttp().getRequest<{ url?: string }>();
-    if (request.url?.startsWith('/health')) {
+    if (context.getType() !== 'http') {
       return next.handle();
     }
     return next.handle().pipe(

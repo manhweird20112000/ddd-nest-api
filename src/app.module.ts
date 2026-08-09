@@ -1,13 +1,12 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { SecretModule } from '@/infra/secret';
-import { HealthModule } from '@/health/health.module';
+import { DatabaseModule } from '@/infra/database/database.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from '@/infra/config/logger.config';
+import { ContainerModules } from './modules';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'node:path';
 import { AppController } from './app.controller';
-import { RequestIdMiddleware } from './middleware/request-id.middleware';
-import { MathModule } from '@/modules/math/math.module';
 
 @Module({
   imports: [
@@ -23,14 +22,10 @@ import { MathModule } from '@/modules/math/math.module';
     }),
     WinstonModule.forRoot(winstonConfig),
     SecretModule,
-    HealthModule,
-    MathModule,
+    // DatabaseModule,
+    ContainerModules,
   ],
   controllers: [AppController],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestIdMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}
