@@ -7,11 +7,11 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: 123456xX
-      POSTGRES_DB: test
+      POSTGRES_DB: dev_cms_ultimate
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U root -d test']
+      test: ['CMD-SHELL', 'pg_isready -U root -d dev_cms_ultimate']
       interval: 5s
       timeout: 5s
       retries: 10
