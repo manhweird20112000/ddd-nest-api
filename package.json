@@ -22,9 +22,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:create": "node scripts/create-migration.js",
-    "migration:up": "mikro-orm migration:up",
-    "migration:down": "mikro-orm migration:down",
-    "seed:run": "node scripts/run-seeder.js"
+    "migration:up": "pnpm build && mikro-orm migration:up",
+    "migration:down": "pnpm build && mikro-orm migration:down",
+    "seed:run": "pnpm build && node scripts/run-seeder.js"
   },
   "dependencies": {
     "@mikro-orm/core": "^7.0.0",

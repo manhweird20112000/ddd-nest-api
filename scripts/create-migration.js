@@ -19,6 +19,9 @@ const migrationDir = path.join(
 );
 
 try {
+  console.log('Building project before reading MikroORM entities...');
+  execFileSync(packageManager, ['build'], { stdio: 'inherit' });
+
   console.log(`📦  Migration creating...`);
   execFileSync(
     packageManager,

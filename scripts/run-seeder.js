@@ -1,8 +1,5 @@
 const path = require('path');
 const { existsSync } = require('fs');
-const { MikroORM } = require('@mikro-orm/postgresql');
-const ormConfigModule = require('../mikro-orm.config');
-const ormConfig = ormConfigModule.default || ormConfigModule;
 
 async function run() {
   const [module, fileName] = process.argv.slice(2);
@@ -10,8 +7,15 @@ async function run() {
   if (!module || !fileName) {
     console.error('❌ Usage: pnpm seed:run <module> <seederFile>');
     console.error('👉 Example: pnpm seed:run user create.seeder.js');
+    console.error(
+      'Seeder files are loaded from dist; pnpm seed:run builds the project first.',
+    );
     process.exit(1);
   }
+
+  const { MikroORM } = require('@mikro-orm/postgresql');
+  const ormConfigModule = require('../mikro-orm.config');
+  const ormConfig = ormConfigModule.default || ormConfigModule;
 
   const seederPath = path.join(
     __dirname,
@@ -42,7 +46,6 @@ async function run() {
 
   console.log(`✅ Seeder "${fileName}" from module "${module}" executed.`);
 }
-
 
 run().catch((error) => {
   console.error('❌ Seeder execution failed:', error);
