@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { initializeTransactionalContext } from 'typeorm-transactional';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { HttpExceptionFilter } from '@/shared/filters/http-exception.filter';
 import { HttpSuccessInterceptor } from '@/shared/interceptors/http-success.interceptor';
@@ -11,7 +10,6 @@ import compression from 'compression';
 import { ValidationPipe } from '@/shared/validation/validation.pipe';
 
 async function bootstrap() {
-  initializeTransactionalContext();
   const app = await NestFactory.create(AppModule);
 
   app.use(compression({ level: 1 }));

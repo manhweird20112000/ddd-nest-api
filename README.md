@@ -23,10 +23,10 @@ A NestJS API template following **Clean Architecture**: clear separation of conc
   - Modular architecture
   - Dependency injection (ports bound to adapters in module)
   - Guards and interceptors
-- **TypeORM** for persistence
+- **MikroORM** for persistence
   - Entity relationships
   - Migrations
-  - Transactions (e.g. `typeorm-transactional`)
+  - Unit of Work and transactions
 - **PostgreSQL** as primary database
 - **JWT** authentication
   - Token-based auth
@@ -54,11 +54,11 @@ A NestJS API template following **Clean Architecture**: clear separation of conc
 
 ### Required Software
 
-- Node.js (v20 or higher)
-  - Recommended: v20 LTS
-  - NPM or Yarn package manager
+- Node.js (v25 or higher)
+  - Recommended: v25
+  - pnpm package manager
 - PostgreSQL database
-  - Version 12 or higher (used with TypeORM)
+  - Version 12 or higher (used with MikroORM)
 - Docker (optional)
   - Docker Engine 20.10+
   - Docker Compose 2.0+
@@ -82,7 +82,7 @@ cd ddd-nest-api
 2. Install dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 3. Create a `.env` file in the root directory:
@@ -116,7 +116,7 @@ LOG_LEVEL=debug
 5. Start the development server:
 
 ```bash
-yarn start:dev
+pnpm start:dev
 ```
 
 ## 🏗 Project Structure (Clean Architecture)
@@ -162,7 +162,7 @@ src/
 │   └── utils/                                # Pure utility functions
 ├── infra/                                    # Global infrastructure
 │   ├── config/                               # App config (database, logger, env)
-│   ├── database/                             # DataSource, module wiring
+│   ├── database/                             # MikroORM module wiring
 │   ├── secret/                               # Secrets adapter (env)
 │   └── logging/                              # Logger adapter
 ├── app.module.ts
@@ -175,36 +175,39 @@ src/
 
 ```bash
 # Start development server with hot-reload
-yarn start:dev
+pnpm start:dev
 
 # Start with debug mode
-yarn start:debug
+pnpm start:debug
 
 # Start with SWC compiler (faster)
-yarn start:swc
+pnpm start:swc
 ```
 
 ### Production
 
 ```bash
 # Build the application
-yarn build
+pnpm build
 
 # Start production server
-yarn start:prod
+pnpm start:prod
 ```
 
 ### Docker
 
 ```bash
 # Build and start containers
-docker-compose up -d
+docker compose up -d --build
 
 # View logs
-docker-compose logs -f
+docker compose logs -f api
+
+# Run migrations manually
+docker compose exec api pnpm migration:up
 
 # Stop containers
-docker-compose down
+docker compose down
 ```
 
 ## 📝 API Documentation
@@ -239,23 +242,23 @@ Authorization: Bearer <your-jwt-token>
 
 ```bash
 # Run all unit tests
-yarn test
+pnpm test
 
 # Run tests in watch mode
-yarn test:watch
+pnpm test:watch
 
 # Run tests with coverage
-yarn test:cov
+pnpm test:cov
 ```
 
 ### E2E Tests
 
 ```bash
 # Run all e2e tests
-yarn test:e2e
+pnpm test:e2e
 
 # Run specific e2e test file
-yarn test:e2e --testPathPattern=auth.e2e-spec.ts
+pnpm test:e2e --testPathPattern=auth.e2e-spec.ts
 ```
 
 ### Test Structure
@@ -269,22 +272,22 @@ test/
 
 ## 📦 Database Migrations
 
-Migrations and data source are configured in `src/infra/config/database.config.ts`. Entity and migration paths follow the module structure: `modules/*/infrastructure/persistence/`.
+Migrations and ORM config are configured in `src/infra/config/database.config.ts` for NestJS and `mikro-orm.config.js` for the MikroORM CLI. Entity and migration paths follow the module structure: `modules/*/infrastructure/persistence/`.
 
 ### Running Migrations
 
 ```bash
 # Build first (migrations run from dist)
-yarn build
+pnpm build
 
 # Run all pending migrations
-yarn migration:run
+pnpm migration:up
 
 # Revert last migration
-yarn migration:revert
+pnpm migration:down
 
 # Run seeders
-yarn seed:run
+pnpm seed:run <module> <seederFile>
 ```
 
 ## 🔧 Code Quality
@@ -293,17 +296,17 @@ yarn seed:run
 
 ```bash
 # Run linter
-yarn lint
+pnpm lint
 
 # Fix linting issues automatically
-yarn lint --fix
+pnpm lint --fix
 ```
 
 ### Formatting
 
 ```bash
 # Format code
-yarn format
+pnpm format
 ```
 
 ### Pre-commit Hooks
@@ -410,7 +413,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - NestJS team for the framework
-- TypeORM for persistence
+- MikroORM for persistence
 - All contributors who have helped shape this template
 
 ## 📞 Support
