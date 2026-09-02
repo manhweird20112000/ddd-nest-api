@@ -21,10 +21,12 @@
 ### Task 1: Add the blocking controller endpoint
 
 **Files:**
+
 - Modify: `src/app.controller.ts`
 - Test: `src/app.controller.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `durationMs` query parameter supplied by HTTP clients.
 - Produces: `GET /api/debug/block-event-loop` returning `{ requestedDurationMs: number, elapsedDurationMs: number }`.
 
