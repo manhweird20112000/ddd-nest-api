@@ -7,6 +7,12 @@ import { ContainerModules } from './modules';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'node:path';
 import { AppController } from './app.controller';
+import { DebugController } from './debug.controller';
+
+const controllers =
+  process.env.NODE_ENV === 'development'
+    ? [AppController, DebugController]
+    : [AppController];
 
 @Module({
   imports: [
@@ -25,7 +31,7 @@ import { AppController } from './app.controller';
     DatabaseModule,
     ContainerModules,
   ],
-  controllers: [AppController],
+  controllers,
   providers: [],
 })
 export class AppModule {}
